@@ -28,7 +28,7 @@ const MIME_TYPES = {
 
 const server = createServer(async (req, res) => {
   let url = req.url.split('?')[0];
-  if (url === '/') url = '/index.html';
+  if (url === '/') url = '/home.html';
   if (!extname(url)) url += '.html';
 
   const filePath = join(__dirname, url);
