@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Beast Boogie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #4040FF;
+      --blue-dark: #2020CC;
+      --neon: #E8FF00;
+      --neon-dark: #C8DD00;
+      --coral: #FD8F83;
+      --salmon: #EF7A6D;
+      --charcoal: #2B2B2B;
+      --dark: #1A1A1A;
+      --black: #111111;
+      --white: #FFFFFF;
+      --gray: #999999;
+      --light-gray: #CCCCCC;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--neon); color: var(--black); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ============================
+       NAVBAR
+    ============================ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 clamp(24px, 4vw, 60px);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(16px);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .nav-logo svg {
+      width: 56px;
+      height: 56px;
+      fill: var(--white);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neon);
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+    .nav-links a.active { text-decoration: underline; text-underline-offset: 6px; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 1001;
+    }
+    .nav-toggle span {
+      width: 28px; height: 2px;
+      background: var(--neon);
+      transition: all 0.3s;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--blue);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--neon); }
+
+    /* ============================
+       PAGE HERO (GRADIENT)
+    ============================ */
+    .page-hero {
+      position: relative;
+      margin-top: 80px;
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: linear-gradient(180deg, var(--blue) 0%, var(--coral) 100%);
+      text-align: center;
+      overflow: hidden;
+    }
+    .page-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .page-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5.5vw, 64px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 24px;
+    }
+    .page-hero-subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* ============================
+       HERO BTN
+    ============================ */
+    .hero-btn:hover {
+      background: var(--black) !important;
+      color: var(--neon) !important;
+      border: 2px solid var(--neon) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       SERVICES GRID
+    ============================ */
+    .section-services {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--charcoal);
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .service-card {
+      text-align: center;
+      transition: transform 0.4s ease;
+    }
+    .service-card:hover { transform: translateY(-8px); }
+    .service-card-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .service-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neon);
+      margin-bottom: 16px;
+    }
+    .service-card-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .service-card-price {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+    .service-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .service-btn:hover {
+      background: var(--black);
+      color: var(--neon);
+      border: 2px solid var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       CONTACT FORM
+    ============================ */
+    .section-form {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--dark);
+    }
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .form-content {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--neon);
+      margin-bottom: 10px;
+      letter-spacing: 0.06em;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 14px 16px;
+      border: 2px solid var(--white);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--gray);
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--neon);
+    }
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E8FF00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+      padding-right: 40px;
+    }
+    .form-group select option {
+      background: var(--charcoal);
+      color: var(--white);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    .form-submit {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+    }
+    .submit-btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .submit-btn:hover {
+      background: var(--black);
+      color: var(--neon);
+      border: 2px solid var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       CONTACT INFO
+    ============================ */
+    .section-contact-info {
+      padding: clamp(80px, 12vw, 160px) 0;
+      background: var(--blue);
+    }
+    .contact-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .contact-info-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--neon);
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+    .contact-info-item p {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* ============================
+       REVEAL ANIMATION
+    ============================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================
+       FOOTER
+    ============================ */
+    .footer {
+      padding: 40px 0;
+      background: var(--dark);
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--light-gray);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--neon); }
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .footer-social a {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--light-gray);
+      transition: all 0.3s;
+    }
+    .footer-social a:hover {
+      background: var(--neon);
+      border-color: var(--neon);
+      color: var(--black);
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ============================
+       UTILITIES
+    ============================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .services-grid { grid-template-columns: 1fr; }
+      .form-content { grid-template-columns: 1fr; }
+      .contact-info-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .services-grid { gap: 24px; }
+      .contact-info-grid { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="closeMenu()">Home</a>
+    <a href="about.html" onclick="closeMenu()">About</a>
+    <a href="schools.html" onclick="closeMenu()">Schools</a>
+    <a href="programs.html" onclick="closeMenu()">Programs</a>
+    <a href="gallery.html" onclick="closeMenu()">Gallery</a>
+    <a href="shop.html" onclick="closeMenu()">Shop</a>
+    <a href="book.html" onclick="closeMenu()">Book Now</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,5 95,85 5,85" fill="white"/>
+        <polygon points="50,25 75,70 25,70" fill="black"/>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schools.html">Schools</a>
+      <a href="programs.html">Programs</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="book.html" class="active">Book Now</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PAGE HERO (GRADIENT) -->
+  <section class="page-hero">
+    <div class="container page-hero-content reveal">
+      <h1 class="page-hero-title">Book Beast Boogie</h1>
+      <a href="#contact-form" class="hero-btn" style="margin-top: 40px; display: inline-block; padding: 16px 40px; background: #E8FF00; color: #111111; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; border: 2px solid transparent; transition: all 0.3s; text-decoration: none;">Get in Touch</a>
+      <p class="page-hero-subtitle" style="margin-top: 32px;">Bring the energy to your next event.</p>
+    </div>
+  </section>
+
+  <!-- SERVICES GRID -->
+  <section class="section-services">
+    <div class="container">
+      <div class="services-grid reveal">
+        <div class="service-card">
+          <div class="service-card-icon">🏫</div>
+          <h3 class="service-card-title">School Assembly</h3>
+          <p class="service-card-desc">Inspire students with dynamic performances and interactive breakdancing demonstrations that engage and motivate.</p>
+          <p class="service-card-price">Starting at $800+</p>
+          <a href="#contact-form" class="service-btn">Inquire</a>
+        </div>
+        <div class="service-card">
+          <div class="service-card-icon">🎉</div>
+          <h3 class="service-card-title">Birthday Party</h3>
+          <p class="service-card-desc">Make your special day unforgettable with energetic performances and hands-on dance workshops for all ages.</p>
+          <p class="service-card-price">Starting at $600+</p>
+          <a href="#contact-form" class="service-btn">Inquire</a>
+        </div>
+        <div class="service-card">
+          <div class="service-card-icon">🏢</div>
+          <h3 class="service-card-title">Corporate Event</h3>
+          <p class="service-card-desc">Elevate your corporate gathering with high-energy performances that energize and unite your team.</p>
+          <p class="service-card-price">Starting at $1200+</p>
+          <a href="#contact-form" class="service-btn">Inquire</a>
+        </div>
+        <div class="service-card">
+          <div class="service-card-icon">📚</div>
+          <h3 class="service-card-title">Workshop</h3>
+          <p class="service-card-desc">Learn the fundamentals of breakdancing in an interactive workshop led by Beast Boogie himself.</p>
+          <p class="service-card-price">Starting at $500+</p>
+          <a href="#contact-form" class="service-btn">Inquire</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM -->
+  <section class="section-form" id="contact-form">
+    <div class="container">
+      <div class="form-container reveal">
+        <h2 class="form-title">Get in Touch</h2>
+        <form class="form-content" onsubmit="event.preventDefault(); alert('Thank you for your inquiry! We will be in touch soon.');">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Full Name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+          </div>
+          <div class="form-group">
+            <label for="event-type">Event Type</label>
+            <select id="event-type" name="event-type" required>
+              <option value="">Select an event type</option>
+              <option value="school-assembly">School Assembly</option>
+              <option value="birthday-party">Birthday Party</option>
+              <option value="corporate-event">Corporate Event</option>
+              <option value="workshop">Workshop</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label for="date">Event Date</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us more about your event..." required></textarea>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="submit-btn">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT INFO -->
+  <section class="section-contact-info">
+    <div class="container">
+      <div class="contact-info-grid reveal">
+        <div class="contact-info-item">
+          <h3>Email</h3>
+          <p><a href="mailto:info@beastboogie.com" style="color: rgba(255,255,255,0.9); transition: color 0.3s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='rgba(255,255,255,0.9)'">info@beastboogie.com</a></p>
+        </div>
+        <div class="contact-info-item">
+          <h3>Phone</h3>
+          <p><a href="tel:+17135551234" style="color: rgba(255,255,255,0.9); transition: color 0.3s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='rgba(255,255,255,0.9)'">(713) 555-1234</a></p>
+        </div>
+        <div class="contact-info-item">
+          <h3>Location</h3>
+          <p>Houston, Texas, USA</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="schools.html">Schools</a>
+        <a href="programs.html">Programs</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="shop.html">Shop</a>
+        <a href="book.html">Book Now</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.tiktok.com/@beastboogie" target="_blank">T</a>
+        <a href="https://www.instagram.com/beastboogie/" target="_blank">I</a>
+        <a href="https://www.facebook.com/BeastBoogieEntertainment/" target="_blank">F</a>
+        <a href="https://www.youtube.com/@BeastBoogie" target="_blank">Y</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Beast Boogie Entertainment. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+      document.getElementById('navToggle').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('navToggle').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMenu(); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beast Boogie Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #4040FF;
+      --blue-dark: #2020CC;
+      --neon: #E8FF00;
+      --neon-dark: #C8DD00;
+      --coral: #FD8F83;
+      --salmon: #EF7A6D;
+      --charcoal: #2B2B2B;
+      --dark: #1A1A1A;
+      --black: #111111;
+      --white: #FFFFFF;
+      --gray: #999999;
+      --light-gray: #CCCCCC;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--neon); color: var(--black); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ============================
+       NAVBAR
+    ============================ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 clamp(24px, 4vw, 60px);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(16px);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .nav-logo svg {
+      width: 56px;
+      height: 56px;
+      fill: var(--white);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neon);
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+    .nav-links a.active { text-decoration: underline; text-underline-offset: 6px; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 1001;
+    }
+    .nav-toggle span {
+      width: 28px; height: 2px;
+      background: var(--neon);
+      transition: all 0.3s;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--blue);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--neon); }
+
+    /* ============================
+       PAGE HERO
+    ============================ */
+    .page-hero {
+      position: relative;
+      margin-top: 80px;
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--blue);
+      text-align: center;
+      overflow: hidden;
+    }
+    .page-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .page-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5.5vw, 64px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 24px;
+    }
+    .page-hero-subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ============================
+       PRODUCTS GRID
+    ============================ */
+    .section-products {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--charcoal);
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .product-card {
+      text-align: center;
+      transition: transform 0.4s ease;
+    }
+    .product-card:hover { transform: translateY(-8px); }
+    .product-card-image {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--coral) 100%);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      overflow: hidden;
+    }
+    .product-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .product-card-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .product-card-price {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--neon);
+      margin-bottom: 20px;
+    }
+    .product-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .product-btn:hover {
+      background: var(--black);
+      color: var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       FEATURED PRODUCT
+    ============================ */
+    .section-featured {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--dark);
+    }
+    .featured-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .featured-image {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--coral) 100%);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .featured-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .featured-text h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.3;
+      margin-bottom: 24px;
+    }
+    .featured-text p {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .featured-features {
+      margin-bottom: 32px;
+    }
+    .feature-item {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neon);
+      margin-bottom: 12px;
+    }
+    .feature-item::before {
+      content: "• ";
+      margin-right: 8px;
+    }
+    .featured-btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .featured-btn:hover {
+      background: var(--black);
+      color: var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       CTA SECTION
+    ============================ */
+    .section-cta {
+      padding: clamp(80px, 12vw, 160px) 0;
+      background: var(--blue);
+      text-align: center;
+    }
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .cta-btn:hover {
+      background: var(--black);
+      color: var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       REVEAL ANIMATION
+    ============================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================
+       FOOTER
+    ============================ */
+    .footer {
+      padding: 40px 0;
+      background: var(--dark);
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--light-gray);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--neon); }
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .footer-social a {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--light-gray);
+      transition: all 0.3s;
+    }
+    .footer-social a:hover {
+      background: var(--neon);
+      border-color: var(--neon);
+      color: var(--black);
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ============================
+       UTILITIES
+    ============================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .featured-content { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="closeMenu()">Home</a>
+    <a href="about.html" onclick="closeMenu()">About</a>
+    <a href="schools.html" onclick="closeMenu()">Schools</a>
+    <a href="programs.html" onclick="closeMenu()">Programs</a>
+    <a href="gallery.html" onclick="closeMenu()">Gallery</a>
+    <a href="shop.html" onclick="closeMenu()">Shop</a>
+    <a href="book.html" onclick="closeMenu()">Book Now</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,5 95,85 5,85" fill="white"/>
+        <polygon points="50,25 75,70 25,70" fill="black"/>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schools.html">Schools</a>
+      <a href="programs.html">Programs</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html" class="active">Shop</a>
+      <a href="book.html">Book Now</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container page-hero-content reveal">
+      <h1 class="page-hero-title">Beast Boogie Shop</h1>
+      <p class="page-hero-subtitle">Rep the culture.</p>
+    </div>
+  </section>
+
+  <!-- PRODUCTS GRID -->
+  <section class="section-products">
+    <div class="container">
+      <div class="products-grid reveal">
+        <div class="product-card">
+          <div class="product-card-image"></div>
+          <h3 class="product-card-name">Beast Boogie Tee Black</h3>
+          <p class="product-card-price">$35</p>
+          <a href="#" class="product-btn">Shop Now</a>
+        </div>
+        <div class="product-card">
+          <div class="product-card-image"></div>
+          <h3 class="product-card-name">Beast Boogie Tee Orange</h3>
+          <p class="product-card-price">$35</p>
+          <a href="#" class="product-btn">Shop Now</a>
+        </div>
+        <div class="product-card">
+          <div class="product-card-image"></div>
+          <h3 class="product-card-name">B-Boy Dojo Hoodie</h3>
+          <p class="product-card-price">$65</p>
+          <a href="#" class="product-btn">Shop Now</a>
+        </div>
+        <div class="product-card">
+          <div class="product-card-image"></div>
+          <h3 class="product-card-name">Breakin' Cap</h3>
+          <p class="product-card-price">$28</p>
+          <a href="#" class="product-btn">Shop Now</a>
+        </div>
+        <div class="product-card">
+          <div class="product-card-image"></div>
+          <h3 class="product-card-name">Sticker Pack</h3>
+          <p class="product-card-price">$12</p>
+          <a href="#" class="product-btn">Shop Now</a>
+        </div>
+        <div class="product-card">
+          <div class="product-card-image"></div>
+          <h3 class="product-card-name">Dance Mat</h3>
+          <p class="product-card-price">$45</p>
+          <a href="#" class="product-btn">Shop Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCT -->
+  <section class="section-featured">
+    <div class="container">
+      <div class="featured-content reveal">
+        <div class="featured-image"></div>
+        <div class="featured-text">
+          <h2>B-Boy Dojo Hoodie</h2>
+          <p>The ultimate essential for serious b-boys. Designed with comfort and style in mind, the B-Boy Dojo Hoodie is perfect for training sessions, performances, and everyday wear.</p>
+          <div class="featured-features">
+            <div class="feature-item">Premium blend fabric</div>
+            <div class="feature-item">Embroidered Beast Boogie logo</div>
+            <div class="feature-item">Kangaroo pocket</div>
+            <div class="feature-item">Available in multiple colors</div>
+          </div>
+          <a href="#" class="featured-btn">Shop Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-cta">
+    <div class="container reveal">
+      <h2 class="cta-title">Visit the Full Store</h2>
+      <a href="#" class="cta-btn">Shop All Items</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="schools.html">Schools</a>
+        <a href="programs.html">Programs</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="shop.html">Shop</a>
+        <a href="book.html">Book Now</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.tiktok.com/@beastboogie" target="_blank">T</a>
+        <a href="https://www.instagram.com/beastboogie/" target="_blank">I</a>
+        <a href="https://www.facebook.com/BeastBoogieEntertainment/" target="_blank">F</a>
+        <a href="https://www.youtube.com/@BeastBoogie" target="_blank">Y</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Beast Boogie Entertainment. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+      document.getElementById('navToggle').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('navToggle').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMenu(); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

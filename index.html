@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEAST BOOGIE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #4040FF;
+      --blue-dark: #2020CC;
+      --neon: #E8FF00;
+      --neon-dark: #C8DD00;
+      --coral: #FD8F83;
+      --salmon: #EF7A6D;
+      --charcoal: #2B2B2B;
+      --dark: #1A1A1A;
+      --black: #111111;
+      --white: #FFFFFF;
+      --gray: #999999;
+      --light-gray: #CCCCCC;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--neon); color: var(--black); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ============================
+       NAVBAR
+    ============================ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 clamp(24px, 4vw, 60px);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(16px);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .nav-logo svg {
+      width: 56px;
+      height: 56px;
+      fill: var(--white);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neon);
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+    .nav-links a.active { text-decoration: underline; text-underline-offset: 6px; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 1001;
+    }
+    .nav-toggle span {
+      width: 28px; height: 2px;
+      background: var(--neon);
+      transition: all 0.3s;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--blue);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--neon); }
+
+    /* ============================
+       HERO
+    ============================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1547153760-18fc86324498?w=1920&q=80') center center / cover no-repeat;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(64,64,255,0.3) 0%, rgba(0,0,0,0.4) 100%);
+    }
+    .hero-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 120px;
+      background: linear-gradient(0deg, var(--blue) 0%, transparent 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+    .hero-btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .hero-btn:hover {
+      background: var(--black);
+      color: var(--neon);
+      border: 2px solid var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+
+    /* ============================
+       REVEAL ANIMATION
+    ============================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================
+       GRADIENT SECTION (Music)
+    ============================ */
+    .section-gradient {
+      padding: clamp(100px, 14vw, 200px) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .gradient-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, var(--blue) 0%, var(--coral) 60%, var(--salmon) 100%);
+      z-index: 0;
+    }
+    .section-gradient .container {
+      position: relative;
+      z-index: 1;
+    }
+    .section-title-large {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 5.5vw, 64px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+
+    /* ============================
+       DARK IMAGE SECTION (Videos)
+    ============================ */
+    .section-dark-image {
+      position: relative;
+      padding: clamp(100px, 14vw, 200px) 0;
+      text-align: center;
+      overflow: hidden;
+    }
+    .dark-image-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=1920&q=80') center center / cover no-repeat;
+      opacity: 0.4;
+    }
+    .dark-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%);
+    }
+    .section-dark-image .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============================
+       BLUE SECTION (Schools)
+    ============================ */
+    .section-blue {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--blue);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .section-blue .feature-img {
+      max-width: 400px;
+      margin: 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    /* ============================
+       CHARCOAL SECTION (Programs)
+    ============================ */
+    .section-charcoal {
+      padding: clamp(80px, 10vw, 140px) 0;
+      background: var(--charcoal);
+    }
+    .charcoal-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .program-card {
+      text-align: center;
+      transition: transform 0.4s ease;
+    }
+    .program-card:hover { transform: translateY(-8px); }
+    .program-card-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--dark);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      overflow: hidden;
+    }
+    .program-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .program-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neon);
+    }
+
+    /* ============================
+       MAILING LIST / CTA
+    ============================ */
+    .section-mailing {
+      padding: clamp(80px, 12vw, 160px) 0;
+      background: var(--blue);
+      text-align: center;
+    }
+    .mailing-title {
+      font-family: var(--font-serif);
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .mailing-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 40px;
+    }
+    .mailing-form {
+      display: flex;
+      gap: 12px;
+      max-width: 700px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .mailing-form input {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font-sans);
+      font-size: 14px;
+    }
+    .mailing-form input::placeholder { color: var(--gray); }
+    .mailing-form input:focus { outline: none; border-color: var(--neon); }
+    .mailing-form button {
+      padding: 16px 40px;
+      background: var(--neon);
+      color: var(--black);
+      border: none;
+      border-radius: 4px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .mailing-form button:hover { background: var(--neon-dark); }
+
+    /* ============================
+       FOOTER
+    ============================ */
+    .footer {
+      padding: 40px 0;
+      background: var(--dark);
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--light-gray);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--neon); }
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .footer-social a {
+      width: 40px; height: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--light-gray);
+      transition: all 0.3s;
+    }
+    .footer-social a:hover {
+      background: var(--neon);
+      border-color: var(--neon);
+      color: var(--black);
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ============================
+       UTILITIES
+    ============================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .programs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .programs-grid { grid-template-columns: 1fr; max-width: 280px; margin: 0 auto; }
+      .mailing-form { flex-direction: column; }
+      .mailing-form input { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="closeMenu()">Home</a>
+    <a href="about.html" onclick="closeMenu()">About</a>
+    <a href="schools.html" onclick="closeMenu()">Schools</a>
+    <a href="programs.html" onclick="closeMenu()">Programs</a>
+    <a href="gallery.html" onclick="closeMenu()">Gallery</a>
+    <a href="shop.html" onclick="closeMenu()">Shop</a>
+    <a href="book.html" onclick="closeMenu()">Book Now</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,5 95,85 5,85" fill="white"/>
+        <polygon points="50,25 75,70 25,70" fill="black"/>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="schools.html">Schools</a>
+      <a href="programs.html">Programs</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="book.html">Book Now</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-bottom"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Beast Boogie is a B-Boy, educator, and legend…</h1>
+      <a href="about.html" class="hero-btn">Full Bio</a>
+    </div>
+  </section>
+
+  <!-- Wave divider: Hero to Gradient -->
+
+  <!-- GRADIENT: Music/Performing -->
+  <section class="section-gradient">
+    <div class="gradient-bg"></div>
+    <div class="container reveal">
+      <h2 class="section-title-large">Performing across the world for 28 years — from Houston gyms to global stages.</h2>
+      <a href="about.html" class="hero-btn">Discover</a>
+    </div>
+  </section>
+
+  <!-- Wave divider: Gradient to Dark Image -->
+
+  <!-- DARK IMAGE: Teaching -->
+  <section class="section-dark-image">
+    <div class="dark-image-bg"></div>
+    <div class="dark-image-overlay"></div>
+    <div class="container reveal">
+      <h2 class="section-title-large">His school assemblies have inspired over 100,000 students.</h2>
+      <a href="schools.html" class="hero-btn">Schools</a>
+    </div>
+  </section>
+
+  <!-- Wave divider: Dark Image to Blue -->
+
+  <!-- BLUE: Book/Programs -->
+  <section class="section-blue">
+    <div class="container reveal">
+      <h2 class="section-title-large">Birthday parties, camps, workshops, and corporate events that move the crowd.</h2>
+      <a href="programs.html" class="hero-btn" style="margin-bottom: 40px;">See Programs</a>
+    </div>
+  </section>
+
+  <!-- Wave divider: Blue to Charcoal -->
+
+  <!-- CHARCOAL: Featured -->
+  <section class="section-charcoal">
+    <div class="container">
+      <div class="charcoal-header reveal">
+        <h2 class="section-title-large" style="color: var(--white);">And he's built an empire of dance education tools.</h2>
+      </div>
+      <div class="programs-grid reveal">
+        <a href="programs.html" class="program-card">
+          <div class="program-card-img">
+            <img src="https://images.unsplash.com/photo-1535525153412-5a42439a210d?w=400&q=80" alt="B-Boy Dojo">
+          </div>
+          <div class="program-card-title">B-Boy Dojo</div>
+        </a>
+        <a href="schools.html" class="program-card">
+          <div class="program-card-img">
+            <img src="https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=400&q=80" alt="School Assemblies">
+          </div>
+          <div class="program-card-title">School Assemblies</div>
+        </a>
+        <a href="programs.html" class="program-card">
+          <div class="program-card-img">
+            <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=400&q=80" alt="Workshops">
+          </div>
+          <div class="program-card-title">Workshops</div>
+        </a>
+        <a href="gallery.html" class="program-card">
+          <div class="program-card-img">
+            <img src="https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=400&q=80" alt="Gallery">
+          </div>
+          <div class="program-card-title">Gallery</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider: Charcoal to Mailing -->
+
+  <!-- MAILING LIST -->
+  <section class="section-mailing">
+    <div class="container reveal">
+      <h2 class="mailing-title">Stay in the loop.</h2>
+      <p class="mailing-sub">Get updates on events, new programs, and exclusive content from Beast Boogie.</p>
+      <form class="mailing-form" onsubmit="event.preventDefault();">
+        <input type="text" placeholder="First Name">
+        <input type="text" placeholder="Last Name">
+        <input type="email" placeholder="Email Address">
+        <button type="submit">Boom</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="schools.html">Schools</a>
+        <a href="programs.html">Programs</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="shop.html">Shop</a>
+        <a href="book.html">Book Now</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.tiktok.com/@beastboogie" target="_blank">T</a>
+        <a href="https://www.instagram.com/beastboogie/" target="_blank">I</a>
+        <a href="https://www.facebook.com/BeastBoogieEntertainment/" target="_blank">F</a>
+        <a href="https://www.youtube.com/@BeastBoogie" target="_blank">Y</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Beast Boogie Entertainment. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+      document.getElementById('navToggle').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('navToggle').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMenu(); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

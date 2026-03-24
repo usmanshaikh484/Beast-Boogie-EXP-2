@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Beast Boogie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #4040FF;
+      --blue-dark: #2020CC;
+      --neon: #E8FF00;
+      --neon-dark: #C8DD00;
+      --coral: #FD8F83;
+      --salmon: #EF7A6D;
+      --charcoal: #2B2B2B;
+      --dark: #1A1A1A;
+      --black: #111111;
+      --white: #FFFFFF;
+      --gray: #999999;
+      --light-gray: #CCCCCC;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--neon); color: var(--black); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ============================
+       NAVBAR
+    ============================ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 clamp(24px, 4vw, 60px);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(16px);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .nav-logo svg {
+      width: 56px;
+      height: 56px;
+      fill: var(--white);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neon);
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+    .nav-links a.active { text-decoration: underline; text-underline-offset: 6px; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 1001;
+    }
+    .nav-toggle span {
+      width: 28px; height: 2px;
+      background: var(--neon);
+      transition: all 0.3s;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--blue);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--neon); }
+
+    /* ============================
+       HERO
+    ============================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-top: 80px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1547153760-18fc86324498?w=1920&q=80') center center / cover no-repeat;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(64,64,255,0.3) 0%, rgba(0,0,0,0.4) 100%);
+    }
+    .hero-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 120px;
+      background: linear-gradient(0deg, var(--blue) 0%, transparent 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--neon);
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+
+    /* ============================
+       HERO BTN
+    ============================ */
+    .hero-btn:hover {
+      background: var(--black) !important;
+      color: var(--neon) !important;
+      border: 2px solid var(--neon) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       REVEAL ANIMATION
+    ============================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================
+       BIO SECTION (Charcoal)
+    ============================ */
+    .section-bio {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--charcoal);
+    }
+    .bio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+    .bio-image {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .bio-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .bio-text h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--white);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+    .bio-text p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 20px;
+    }
+    .bio-text p:last-child { margin-bottom: 0; }
+
+    /* ============================
+       STATS SECTION (Blue)
+    ============================ */
+    .section-stats {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--blue);
+      text-align: center;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(40px, 5vw, 80px);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 700;
+      color: var(--neon);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ============================
+       ACHIEVEMENTS SECTION (Dark)
+    ============================ */
+    .section-achievements {
+      padding: clamp(100px, 14vw, 200px) 0;
+      background: var(--dark);
+    }
+    .achievements-header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+    .achievements-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 5.5vw, 64px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+    .achievement-card {
+      background: var(--charcoal);
+      padding: clamp(24px, 4vw, 40px);
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      transform-style: preserve-3d;
+      perspective: 800px;
+      border: 2px solid transparent;
+    }
+    .achievement-card:hover {
+      transform: rotateY(-8deg) rotateX(4deg) scale(1.05);
+      box-shadow: 12px 12px 0 var(--neon), 0 20px 40px rgba(0,0,0,0.3);
+      border-color: var(--neon);
+    }
+    .achievement-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      line-height: 1.4;
+    }
+
+    /* ============================
+       QUOTE SECTION (Gradient)
+    ============================ */
+    .section-quote {
+      padding: clamp(100px, 14vw, 200px) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, var(--blue) 0%, var(--coral) 60%, var(--salmon) 100%);
+      z-index: 0;
+    }
+    .quote-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+    .quote-text {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4.5vw, 56px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.4;
+      margin-bottom: 24px;
+    }
+    .quote-author {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ============================
+       CTA SECTION (Blue)
+    ============================ */
+    .section-cta {
+      padding: clamp(80px, 12vw, 160px) 0;
+      background: var(--blue);
+      text-align: center;
+    }
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4.5vw, 56px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      margin-bottom: 40px;
+    }
+    .cta-button {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--neon);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .cta-button:hover {
+      background: var(--black);
+      color: var(--neon);
+      border: 2px solid var(--neon);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    /* ============================
+       FOOTER
+    ============================ */
+    .footer {
+      padding: 40px 0;
+      background: var(--dark);
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--light-gray);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--neon); }
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .footer-social a {
+      width: 40px; height: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--light-gray);
+      transition: all 0.3s;
+    }
+    .footer-social a:hover {
+      background: var(--neon);
+      border-color: var(--neon);
+      color: var(--black);
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ============================
+       UTILITIES
+    ============================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 60px);
+    }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .hero {
+        margin-top: 0;
+        height: 80vh;
+        min-height: 500px;
+      }
+      .bio-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero {
+        height: 70vh;
+        min-height: 400px;
+      }
+      .achievements-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="closeMenu()">Home</a>
+    <a href="about.html" onclick="closeMenu()">About</a>
+    <a href="schools.html" onclick="closeMenu()">Schools</a>
+    <a href="programs.html" onclick="closeMenu()">Programs</a>
+    <a href="gallery.html" onclick="closeMenu()">Gallery</a>
+    <a href="shop.html" onclick="closeMenu()">Shop</a>
+    <a href="book.html" onclick="closeMenu()">Book Now</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,5 95,85 5,85" fill="white"/>
+        <polygon points="50,25 75,70 25,70" fill="black"/>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html" class="active">About</a>
+      <a href="schools.html">Schools</a>
+      <a href="programs.html">Programs</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="book.html">Book Now</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-bottom"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">28 Years Breaking</div>
+      <h1 class="hero-title">Beast Boogie is a B-Boy, educator, and legend…</h1>
+      <a href="book.html" class="hero-btn" style="margin-top: 40px; display: inline-block; padding: 16px 40px; background: #E8FF00; color: #111111; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; border: 2px solid transparent; transition: all 0.3s; text-decoration: none;">Book Beast Boogie</a>
+    </div>
+  </section>
+
+  <!-- BIO SECTION -->
+  <section class="section-bio">
+    <div class="bio-grid reveal">
+      <div class="bio-image">
+        <img src="https://images.unsplash.com/photo-1535525153412-5a42439a210d?w=600&q=80" alt="Beast Boogie">
+      </div>
+      <div class="bio-text">
+        <h2>From Houston Gyms to Global Stages</h2>
+        <p>Anthony "Beast Boogie" Pepper is a legendary B-Boy who has dedicated his life to the craft of breaking and hip-hop culture. With 28 years of experience, he has performed on the world's biggest stages, from NBA All-Star games to international dance festivals.</p>
+        <p>Beyond the performances, Beast Boogie is a passionate educator committed to using dance as a tool for empowerment. He has touched the lives of over 100,000 students through his dynamic school assemblies and workshops, inspiring young people to find confidence, community, and creativity through breaking.</p>
+        <p>His mission is clear: bring the energy, culture, and positive message of hip-hop and breaking to audiences everywhere, one performance and one student at a time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider: Bio to Stats -->
+
+  <!-- STATS SECTION -->
+  <section class="section-stats">
+    <div class="container">
+      <div class="stats-grid reveal">
+        <div class="stat-card">
+          <div class="stat-number">80+</div>
+          <div class="stat-label">Battles Won</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">100K+</div>
+          <div class="stat-label">Students Inspired</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">28</div>
+          <div class="stat-label">Years Breaking</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider: Stats to Achievements -->
+
+  <!-- ACHIEVEMENTS SECTION -->
+  <section class="section-achievements">
+    <div class="achievements-header reveal">
+      <h2>Performance Stages</h2>
+    </div>
+    <div class="achievements-grid reveal">
+      <div class="achievement-card">
+        <div class="achievement-card-title">NBA All-Star</div>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-card-title">Art Basel Miami</div>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-card-title">Houston Rockets</div>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-card-title">Red Bull BC One</div>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-card-title">Bumbershoot Festival</div>
+      </div>
+      <div class="achievement-card">
+        <div class="achievement-card-title">IBE Europe</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider: Achievements to Quote -->
+
+  <!-- QUOTE SECTION -->
+  <section class="section-quote">
+    <div class="quote-bg"></div>
+    <div class="quote-content reveal">
+      <p class="quote-text">"Breaking is about community, creativity, and personal expression. When you inspire someone through dance, you're giving them a voice and a foundation they didn't have before."</p>
+      <p class="quote-author">— Beast Boogie</p>
+    </div>
+  </section>
+
+  <!-- Wave divider: Quote to CTA -->
+
+  <!-- CTA SECTION -->
+  <section class="section-cta">
+    <div class="container reveal">
+      <h2 class="cta-title">Ready to bring Beast Boogie to your event?</h2>
+      <a href="book.html" class="cta-button">Book Beast Boogie</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="schools.html">Schools</a>
+        <a href="programs.html">Programs</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="shop.html">Shop</a>
+        <a href="book.html">Book Now</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.tiktok.com/@beastboogie" target="_blank">T</a>
+        <a href="https://www.instagram.com/beastboogie/" target="_blank">I</a>
+        <a href="https://www.facebook.com/BeastBoogieEntertainment/" target="_blank">F</a>
+        <a href="https://www.youtube.com/@BeastBoogie" target="_blank">Y</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Beast Boogie Entertainment. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+      document.getElementById('navToggle').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('navToggle').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMenu(); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
